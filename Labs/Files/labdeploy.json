@@ -58,6 +58,13 @@
                 "description": "Windows Server image SKU. v6/v7 sizes need a Gen2 image"
             }
         },
+        "deployAppService": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Deploy the App Service plan, web app and function app. Set to false if the subscription has no App Service quota"
+            }
+        },
         "appServicePlanSku": {
             "type": "string",
             "defaultValue": "B1",
@@ -483,6 +490,7 @@
             }
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "name": "[variables('appServicePlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[resourceGroup().location]",
@@ -498,6 +506,7 @@
             }
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "name": "[variables('appServiceName')]",
             "type": "Microsoft.Web/sites",
             "location": "[resourceGroup().location]",
@@ -521,19 +530,7 @@
                     "name": "standard"
                 },
                 "tenantId": "[subscription().tenantid]",
-                "accessPolicies": [
-                    {
-                        "tenantId": "[subscription().tenantid]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')),'2019-08-01', 'full').identity.principalId]",
-                        "permissions": {
-                            "keys": [],
-                            "secrets": [
-                                "get"
-                            ],
-                            "certificates": []
-                        }
-                    }
-                ],
+                "accessPolicies": "[if(parameters('deployAppService'), createArray(createObject('tenantId', subscription().tenantid, 'objectId', reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2019-08-01', 'full').identity.principalId, 'permissions', createObject('keys', createArray(), 'secrets', createArray('get'), 'certificates', createArray()))), createArray())]",
                 "enabledForDeployment": false,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": false
@@ -544,6 +541,7 @@
             "tags": "[parameters('resourceTags')]"
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "type": "Microsoft.Web/sites",
             "kind": "functionapp",
             "name": "[variables('functionName')]",
