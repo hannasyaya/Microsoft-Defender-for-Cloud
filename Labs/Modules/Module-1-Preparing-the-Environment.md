@@ -120,4 +120,16 @@ When the deployment is complete, you should see the following:
 > * You can enable Microsoft Defender for Cloud trial for 30-days on a subscriptions only if not previously used.
 > * To enable Microsoft Defender for Cloud on a subscription, you must be assigned the role of Subscription Owner, Subscription Contributor, or Security Admin.
 
+### Cleaning up the lab environment
+Use this if a deployment failed and you want to redeploy, or when you have finished the labs.
+
+1. Open **Azure Cloud Shell** (Bash) from the Azure Portal.
+2. Download and run the cleanup script, passing the resource group you deployed into:
+   ```bash
+   curl -sLO https://raw.githubusercontent.com/Azure/Microsoft-Defender-for-Cloud/main/Labs/Files/labcleanup.sh
+   bash labcleanup.sh <resource-group-name>
+   ```
+
+The script deletes the lab resource group and the `asclab-aks` resource group, force-deletes the Log Analytics workspace and purges the soft-deleted Key Vault. Without those last two steps a redeploy fails, because the template reuses the same names and Azure keeps deleted ones reserved. Microsoft Defender for Cloud plans enabled in Exercise 3 are not changed.
+
 ### Continue with the next lab: [Module 2 - Exploring Microsoft Defender for Cloud](../Modules/Module-2-Exploring-Azure-Security-Center.md)
