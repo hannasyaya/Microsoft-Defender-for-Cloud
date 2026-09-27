@@ -60,7 +60,7 @@
         },
         "deployAppService": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "Deploy the App Service plan, web app and function app. Set to false if the subscription has no App Service quota"
             }
