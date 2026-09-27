@@ -26,6 +26,52 @@
                 "Premium_LRS"
             ]
         },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2als_v7",
+            "metadata": {
+                "description": "Size of the Windows and Linux VMs. v6/v7 sizes need diskControllerType NVMe; B-series and older sizes need SCSI"
+            }
+        },
+        "aksNodeVmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2als_v7",
+            "metadata": {
+                "description": "Size of the AKS node"
+            }
+        },
+        "diskControllerType": {
+            "type": "string",
+            "defaultValue": "NVMe",
+            "allowedValues": [
+                "NVMe",
+                "SCSI"
+            ],
+            "metadata": {
+                "description": "VM disk controller. Use NVMe for v6/v7 sizes, SCSI for B-series and older sizes"
+            }
+        },
+        "windowsSku": {
+            "type": "string",
+            "defaultValue": "2022-datacenter-g2",
+            "metadata": {
+                "description": "Windows Server image SKU. v6/v7 sizes need a Gen2 image"
+            }
+        },
+        "appServicePlanSku": {
+            "type": "string",
+            "defaultValue": "B1",
+            "allowedValues": [
+                "B1",
+                "B2",
+                "S1",
+                "P0v3",
+                "P1v3"
+            ],
+            "metadata": {
+                "description": "App Service plan tier"
+            }
+        },
         "resourceTags": {
             "type": "object",
             "defaultValue": {
@@ -39,7 +85,7 @@
         "workspaceSKU": "PerGB2018",
         "vmNameWindows": "asclab-win",
         "vmNameLinux": "asclab-linux",
-        "vmSize": "Standard_B1ms",
+        "vmSize": "[parameters('vmSize')]",
         "availabilitySetName": "asclab-as",
         "vNetName": "asclab-vnet",
         "vNetAddressPrefix": "192.168.0.0/16",
@@ -49,7 +95,7 @@
         "subnetRef": "[concat(variables('vNetId'),'/subnets/', variables('subnetName'))]",
         "nsgName": "asclab-nsg",
         "windowsOffer": "WindowsServer",
-        "windowsSku": "2016-Datacenter",
+        "windowsSku": "[parameters('windowsSku')]",
         "windowsPublisher": "MicrosoftWindowsServer",
         "linuxOffer": "0001-com-ubuntu-server-jammy",
         "linuxSku": "22_04-lts-gen2",
@@ -326,7 +372,7 @@
             }
         },
         {
-            "apiVersion": "2018-10-01",
+            "apiVersion": "2024-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmNameWindows'))]",
             "location": "[resourceGroup().location]",
@@ -348,6 +394,7 @@
                     "adminpassword": "[parameters('password')]"
                 },
                 "storageProfile": {
+                    "diskControllerType": "[parameters('diskControllerType')]",
                     "imageReference": {
                         "publisher": "[variables('windowsPublisher')]",
                         "offer": "[variables('windowsOffer')]",
@@ -373,7 +420,7 @@
             }
         },
         {
-            "apiVersion": "2018-10-01",
+            "apiVersion": "2024-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmNameLinux'))]",
             "location": "[resourceGroup().location]",
@@ -395,6 +442,7 @@
                     "adminpassword": "[parameters('password')]"
                 },
                 "storageProfile": {
+                    "diskControllerType": "[parameters('diskControllerType')]",
                     "imageReference": {
                         "publisher": "[variables('linuxPublisher')]",
                         "offer": "[variables('linuxOffer')]",
@@ -440,7 +488,7 @@
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-08-01",
             "sku": {
-                "name": "S1"
+                "name": "[parameters('appServicePlanSku')]"
             },
             "dependsOn": [],
             "tags": "[parameters('resourceTags')]",
@@ -552,7 +600,7 @@
                     {
                         "name": "agentpool",
                         "count": 1,
-                        "vmSize": "Standard_B2s",
+                        "vmSize": "[parameters('aksNodeVmSize')]",
                         "osType": "Linux",
                         "storageProfile": "ManagedDisks",
                         "type": "VirtualMachineScaleSets",
