@@ -58,6 +58,13 @@
                 "description": "Windows Server image SKU. v6/v7 sizes need a Gen2 image"
             }
         },
+        "sqlLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Region for the SQL server and database. Change it (for example to eastus2 or centralus) if the resource group's region does not accept new SQL servers"
+            }
+        },
         "deployAppService": {
             "type": "bool",
             "defaultValue": false,
@@ -631,7 +638,7 @@
         {
             "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('sqlLocation')]",
             "apiVersion": "2015-05-01-preview",
             "dependsOn": [],
             "tags": "[parameters('resourceTags')]",
@@ -643,7 +650,7 @@
                 {
                     "name": "AllowAzureIPs",
                     "type": "firewallrules",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('sqlLocation')]",
                     "apiVersion": "2015-05-01-preview",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
@@ -656,7 +663,7 @@
                 {
                     "name": "[variables('sqlDatabaseName')]",
                     "type": "databases",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('sqlLocation')]",
                     "apiVersion": "2017-03-01-preview",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
