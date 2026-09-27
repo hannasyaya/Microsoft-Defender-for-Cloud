@@ -58,6 +58,13 @@
                 "description": "Windows Server image SKU. v6/v7 sizes need a Gen2 image"
             }
         },
+        "deploySql": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Deploy the SQL server and sample database. Set to true once the subscription is allowed to create SQL servers in sqlLocation"
+            }
+        },
         "sqlLocation": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -636,6 +643,7 @@
             }
         },
         {
+            "condition": "[parameters('deploySql')]",
             "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
             "location": "[parameters('sqlLocation')]",
@@ -648,6 +656,7 @@
             },
             "resources": [
                 {
+                    "condition": "[parameters('deploySql')]",
                     "name": "AllowAzureIPs",
                     "type": "firewallrules",
                     "location": "[parameters('sqlLocation')]",
@@ -661,6 +670,7 @@
                     }
                 },
                 {
+                    "condition": "[parameters('deploySql')]",
                     "name": "[variables('sqlDatabaseName')]",
                     "type": "databases",
                     "location": "[parameters('sqlLocation')]",
