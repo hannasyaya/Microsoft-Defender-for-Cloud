@@ -262,9 +262,8 @@ This means that your Azure subscription, will be able to detect this server afte
 
 ![Arc VM Extensions](../Images/extensionsInArcVM.png?raw=true)
 
-Note: You should install the log analytics agent/ Azure Monitor Agent on the machine in order for it to be protected by Microsoft Defender for Servers as part of Microsoft Defender for Cloud automatically. See more [here](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/log-analytics-agent) for the log analytics agent. 
-
-! Please be aware that the Log Analytics agent is on a deprecation path and won't be supported after August 31, 2024. If you use the Log Analytics agent to ingest data to Azure Monitor, [migrate to the new Azure Monitor agent](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-migration) prior to that date. 
+> [!WARNING]
+> **Outdated note:** Defender for Servers no longer needs the Log Analytics agent (retired in November 2024) or the Azure Monitor Agent. All Defender for Servers features are provided by the **Microsoft Defender for Endpoint** agent (the `MDE.Windows` / `MDE.Linux` extension), complemented by agentless machine scanning. On Arc-enabled servers, Defender for Cloud deploys the MDE extension automatically once Defender for Servers is enabled on the subscription. The `AzureSecurityWindowsAgent` extension mentioned above may therefore not be present. See [Prepare for retirement of the Log Analytics agent](https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepare-deprecation-log-analytics-mma-agent).
 
 
 ### Now you have successfully onboarded a server outside of Azure to Microsoft Defender for Cloud by using Azure Arc.

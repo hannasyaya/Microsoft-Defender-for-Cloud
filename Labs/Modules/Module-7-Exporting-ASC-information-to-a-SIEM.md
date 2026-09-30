@@ -41,6 +41,11 @@ In this exercise, you will understand how to configure the continuous export for
 
 ### Exercise 2: Integration with Azure Sentinel
 
+> [!WARNING]
+> **Partly outdated:**
+> - Azure Sentinel is now **Microsoft Sentinel**, and it's moving to the [Microsoft Defender portal](https://learn.microsoft.com/en-us/azure/sentinel/move-to-defender). The Azure portal experience is being retired (currently scheduled for March 31, 2027), so newer subscriptions may be redirected to the Defender portal.
+> - In step 7, the per-subscription connector is now called **Subscription-based Microsoft Defender for Cloud (Legacy)** and isn't recommended. Microsoft recommends the **Tenant-based Microsoft Defender for Cloud** connector or the Microsoft Defender XDR integration. See [Ingest Microsoft Defender for Cloud alerts into Microsoft Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/connect-defender-for-cloud).
+
 1.	On the Azure portal, navigate to **Azure Sentinel** service or [click here](https://portal.azure.com/#blade/Microsoft_Azure_Security_Insights/WorkspaceSelectorBlade).
 2.	On the Azure Sentinel workspaces, click on **+ Create** workspace button – for this exercise we’ll use the same Log Analytics workspace used by Microsoft Defender for Cloud.
 
@@ -65,6 +70,12 @@ Enabling this preview feature, bi-directional alert synchronization, will automa
 ### Exercise 3: Microsoft Defender for Cloud can now auto provision the Azure Policy's Guest Configuration extension (in preview)
 Azure Policy can audit settings inside a machine, both for machines running in Azure and Arc connected machines. The validation is performed by the Guest Configuration extension and client. Learn more in [Understand Azure Policy's Guest Configuration](https://docs.microsoft.com/en-gb/azure/governance/policy/concepts/guest-configuration).
 With this update you can now set Microsoft Defender for Cloud to automatically provision this extension to all supported machines.
+> [!NOTE]
+> **Updated UI:** The **Auto provisioning** page was replaced by **Settings & monitoring** when the Log Analytics agent retired. The Guest Configuration agent is also what now provides the OS security baseline recommendations with Defender for Servers Plan 2. Use these steps instead:
+> 1. In Microsoft Defender for Cloud, click **Environment settings** and select your subscription.
+> 2. Select **Settings & monitoring** from the top menu.
+> 3. For **Guest Configuration agent (preview)**, toggle the status to **On**, then select **Continue** and **Save**.
+
 1.	In Azure Microsoft Defender for Cloud, click on **Environment Settings**.
 2.	Then select **Auto provisioning** from the sidebar.
 3.	Here, for **Guest Configuration agent**, toggle the status to be **On**.

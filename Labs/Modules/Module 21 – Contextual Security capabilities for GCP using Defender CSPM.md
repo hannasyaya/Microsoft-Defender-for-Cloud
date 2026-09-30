@@ -34,6 +34,10 @@ To enable Defender CSPM on already onboarded GCP projects or organizations, perf
    ![image](../Images/module21enableDCSPM.png?raw=true)
 5.	Under **Auto-provisioning** configuration, Turn On **Agentless Scanning**, **Sensitive Data Discovery** and **Permissions Management** capabilities and click **Save**.
    ![image](../Images/module21enableDCSPMSettings.png?raw=true)
+
+> [!NOTE]
+> The **Permissions Management** toggle may no longer be shown: CIEM is now built into the Defender CSPM plan following the retirement of Microsoft Entra Permissions Management. For GCP, CIEM recommendations now require **Cloud Logging ingestion (preview)** to be enabled in the Defender CSPM plan settings. See [CIEM in Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/permissions-management).
+
 6.	Click **Next: Configure Access**.
    ![image](../Images/module21ConfigureAccess.png?raw=true)
 7.	Choose a deployment method: **GCP Cloud shell** or **Terraform** and **Copy** or **Download** the Script/Template. 
