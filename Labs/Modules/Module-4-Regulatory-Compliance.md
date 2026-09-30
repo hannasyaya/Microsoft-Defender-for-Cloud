@@ -26,6 +26,9 @@ If you want to assign a standard in AWS or GCP, choose an AWS or GCP connection 
 Modules [10](https://github.com/Azure/Microsoft-Defender-for-Cloud/blob/main/Labs/Modules/Module-10-GCP.md) and [11](https://github.com/Azure/Microsoft-Defender-for-Cloud/blob/main/Labs/Modules/Module-11-AWS.md) will walk through creating those multicloud connectors. Feel free to skip to those modules and then come back. 
 3.  Select **Security policies**. 
 4.	Under the **Standards** tab, look for *CIS Microsoft Azure Foundations Benchmark v2.0.0*.
+
+> [!NOTE]
+> Newer CIS versions are available: **CIS Azure Foundations v2.1.0** (GA) and **v3.0** (preview), and v2.0.0 may no longer be offered. If you don't see v2.0.0, pick the newest version; the rest of this module works the same way.
 5.  Select the standard. 
 6.  Notice the number of **audit** and **manual** policy definitions. 
 **Audit effect**: When a resource does not adhere to the specific policy definition, Policy will mark said resource as **non-compliant** and create a warning in the activity log but it won't take action on the actual resource. Visit this[page](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-audit) to learn more about the audit effect. 
@@ -40,6 +43,9 @@ When assigning this standard to your scope (subscription or management group), y
 > It will take a while until the change takes an effect (2-3 hours).
   
 ### Exercise 3: Exploring a benchmark 
+
+> [!NOTE]
+> **Updated UI:** The standard's page no longer has a search box. Expand **3. Storage Accounts** and open the control for secure transfer to find **Secure transfer to storage accounts should be enabled**, or tick **Expand all compliance controls** and use your browser's find (Ctrl+F / Cmd+F). If you already fixed this recommendation in Module 2, the storage account shows under **Healthy resources** and there's nothing left to fix; continue with step 6.
 1. Navigate to the standard you've chosen for Exercise 2. For the lab, we chose *CIS Microsoft Azure Foundations Benchmark v2.0.0*. Notice the different compliance controls mapped to assessments.
 2.	Search for **Secure transfer to storage accounts should be enabled.**
 3.	Click to open **Secure transfer to storage accounts should be enabled.**

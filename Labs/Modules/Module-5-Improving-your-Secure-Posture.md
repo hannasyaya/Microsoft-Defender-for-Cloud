@@ -10,48 +10,48 @@ This exercise guides you how to use the vulnerability assessment for virtual mac
 
 ### Exercise 1: Vulnerability assessment for VMs
 
-With Microsoft Defender for Cloud for servers, you can quickly deploy the integrated vulnerability assessment solution (powered by Qualys) with no additional configuration or extra costs. Once the vulnerability assessment scanner is deployed, it continually assesses all the installed applications on a virtual machine to find vulnerabilities and presents its findings in the Microsoft Defender for Cloud console. When a machine is found that doesn't have *vulnerability* assessment solution deployed, Microsoft Defender for Cloud generates a recommendation: *Machines should have a vulnerability assessment solution*. To remediate a resource, you can click on the Quick Fix button to deploy the necessary VM extension.
+> [!IMPORTANT]
+> **Updated exercise:** The previous version of this exercise deployed the integrated vulnerability scanner powered by **Qualys**. Microsoft [retired the built-in Qualys scanner on May 1, 2024](https://techcommunity.microsoft.com/blog/microsoftdefendercloudblog/defender-for-cloud---qualys-retirement-plan-for-vulnerability-assessment-on-clou/4024533). Vulnerability assessment for machines is now provided by **Microsoft Defender Vulnerability Management (MDVM)**, which is built into Defender for Servers and needs no extra scanner extension. The recommendation *Machines should have a vulnerability assessment solution* only appears for machines with no vulnerability assessment at all, so you may not see it.
 
-**Explore vulnerability assessment recommendations:**
+With Microsoft Defender for Servers, vulnerability assessment is powered by Microsoft Defender Vulnerability Management. It uses the Microsoft Defender for Endpoint agent (and, with Defender for Servers Plan 2 or Defender CSPM, agentless machine scanning) to continuously assess the installed software on your virtual machines and present its findings in the Microsoft Defender for Cloud console.
 
-1.	From Microsoft Defender for Cloud sidebar, click on **Recommendations**.
-2.	Expend **Remediate vulnerabilities** security control (which contains all recommendations related to security vulnerabilities).
-3.	Make sure you have *Machines should have a vulnerability assessment solution* recommendation. If you don’t have this recommendation on the list, you will probably need 24 hours to have the recommendation with the assessment.
-4.	Open the **Machines should have a vulnerability assessment solution” recommendation** – this recommendation is a Quick Fix one which allows you to deploy the VM extension on the desired VMs.
-5.	Expend **Remediation steps** – in addition to the Quick Fix remediation option, you can also use the **view quick fix logic** option to expose an automatic remediation script content (ARM template). **Close this window.**
-6.	From the unhealthy tab, select both *asclab-win* and *aslab-linux* virtual machines. Click **Fix**.
-7.	On the **Choose a vulnerability assessment solution** select **Recommended: Deploy ASC integrated vulnerability scanner powered by Qualys (included in Microsoft Defender for Cloud for servers)**. Click **Proceed**.
-8.	A window opens, review the list of VMs and click **Remediate 2 resource** button.
-9.	Remediation is now in process. Microsoft Defender for Cloud will deploy the Qualys VM extension on the selected VMs, so you track the status using the notification area or by using Azure activity log. Wait 5-10 minutes for the process to complete.
+**Verify vulnerability assessment is enabled:**
 
-> Note: You can find a list of supported operating systems [here](https://docs.microsoft.com/en-us/azure/security-center/deploy-vulnerability-assessment-vm#deploy-the-integrated-scanner-to-your-azure-and-hybrid-machines).
-
-10.	Ensure the VM extension is deployed on the relevant machines:
+1.	From Microsoft Defender for Cloud sidebar, select **Environment settings** and then select your subscription.
+2.	Locate the **Servers** plan and select **Settings**.
+3.	Make sure the following components are **On**:
+    - **Vulnerability assessment for machines** (Microsoft Defender Vulnerability Management)
+    - **Endpoint protection** (Microsoft Defender for Endpoint integration)
+    - **Agentless scanning for machines**
+4.	Select **Continue** and **Save** if you changed anything.
+5.	Ensure the Defender for Endpoint extension is deployed on the relevant machines:
     - From Azure Portal, open **Virtual Machines**.
     - Select **asclab-win**.
-    - From the sidebar, click on **Extensions**.
-    - Make sure to have `MDE.Windows` extension installed and successfully provisioned.
+    - From the sidebar, click on **Extensions + applications**.
+    - Make sure to have `MDE.Windows` extension installed with the status *Provisioning succeeded*.
     - Repeat the process for **asclab-linux** – you should expect to see a different name for the extension on Linux platform: `MDE.Linux`.
 
-> Note: There are multiple ways you can automate the process where you need to achieve at scale deployment. More details are available on our [documentation](https://docs.microsoft.com/en-us/azure/security-center/deploy-vulnerability-assessment-vm#automate-at-scale-deployments) and on [blog](https://techcommunity.microsoft.com/t5/azure-security-center/built-in-vulnerability-assessment-for-vms-in-azure-security/ba-p/1577947).
-
-11.	The VA agent will now collect all required artifacts, send them to Qualys Cloud and findings will be presented back on ASC console within 24 hours.
+> Note: It can take up to 12-24 hours after onboarding before vulnerability findings appear. Keep the VMs running until then. You can find a list of supported operating systems [here](https://learn.microsoft.com/en-us/azure/defender-for-cloud/support-matrix-defender-for-servers).
 
 **View and remediate vulnerability assessment findings:**
 
 1.	From Microsoft Defender for Cloud sidebar, click on **Recommendations**.
-2.	Expend **Remediate vulnerabilities** security control (which contains all recommendations related to security vulnerabilities).
-3.	Search for **Machines should have vulnerability findings resolved**.
-4.	On the Security Checks, you should see a list of vulnerabilities found on the affected resources.
-5.	On the recommendation, expend **Affected resources**. You should see two unhealthy resources (asclab-win and asclab-linux) and not applicable resources.
-6.	From the **Unhealthy resources**, select **asclab-win** resource. Here you can view all relevant recommendations for that resource.
-7.	From the findings list, click on the highest vulnerability located at the top (ID 376813).
-8.	Notice the vulnerability details on the information pane including the description, impact, severity, remediation steps, etc.
+2.	Search for **Machines should have vulnerability findings resolved**.
+3.	On the recommendation, review the list of vulnerabilities (CVEs) found on the affected resources.
+4.	Expand **Affected resources**. You should see the unhealthy resources (asclab-win and asclab-linux).
+5.	From the **Unhealthy resources**, select **asclab-win** resource. Here you can view all relevant findings for that resource.
+6.	From the findings list, click on the highest severity vulnerability at the top.
+7.	Notice the vulnerability details on the information pane including the description, affected software, severity and remediation steps.
+
+Learn more in [Transition to Microsoft Defender Vulnerability Management](https://learn.microsoft.com/en-us/azure/defender-for-cloud/transition-to-defender-vulnerability-management).
 
 ### Exercise 2: Vulnerability assessment for Containers
 
 Microsoft Defender for Cloud scans images in your ACR (Azure Container Registry) that are pushed to the registry, imported into the registry, or any images pulled within the last 30 days.
-Then, it exposes detailed findings per image. All vulnerabilities can be found in the following recommendation: Vulnerabilities in Azure Container Registry images should be remediated (powered by Qualys).
+Then, it exposes detailed findings per image.
+
+> [!IMPORTANT]
+> **Updated exercise:** Container image scanning powered by **Qualys** was retired in 2024 and replaced by agentless scanning powered by **Microsoft Defender Vulnerability Management (MDVM)**. Make sure **Defender for Containers** or **Defender CSPM** is **On** for your subscription, with **Agentless container vulnerability assessment** turned on in the plan settings. Findings usually appear within a few hours after the image is pushed. For a full walkthrough, see [Module 9](Module-9-Agentless-Container-Vulnerability-Assessment-Scanning.md).
 
 To simulate a container registry image with vulnerabilities, we will use ACR tasks commands and sample image:
 
@@ -75,9 +75,9 @@ az acr build --image sample/hello-world:v1 --registry <your container registry n
 ![Build Linux container in Cloud Shell](../Images/asc-build-linux-container-cloud-shell.gif?raw=true)
 
 5. Wait for a successful execution message to appear. For example: Run ID: cb1 was successful after 23s
-6.	The scan completes typically within few minutes, but it might take up to 15 minutes for the vulnerabilities/security findings to appear on the recommendation.
+6.	The scan starts when the image is pushed. It can take a few hours for the vulnerabilities/security findings to appear on the recommendation.
 7.	From Microsoft Defender for Cloud sidebar, click on **Recommendations**.
-8.	Expand **Remediate vulnerabilities** security control and select **Container registry images should have vulnerability findings resolved**.
+8.	Search for the recommendation **Azure registry container images should have vulnerabilities resolved** and select it. (The recommendations list is no longer grouped by security controls, and the exact name can vary slightly; searching for `container` finds it.)
 9.	On the recommendation page, notice the following details at the upper section:
     - Unhealthy registries: *1/1*
     - Severity of recommendation: *High*

@@ -59,6 +59,9 @@ To setup GitHub action:
 
 6.	Copy and paste the following sample action workflow into the **Edit new file** tab. 
 
+> [!NOTE]
+> **Updated workflow:** The original sample used `github/codeql-action/upload-sarif@v2` and `actions/checkout@v3`, which GitHub has deprecated, and the `@preview` channel of the MSDO action. The workflow below uses current versions and adds the `permissions` block that uploading SARIF results requires.
+
 ~~~~~~
 name: MSDO Scan
 
@@ -72,6 +75,12 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+  security-events: write
+
 jobs:
   security:
     runs-on: windows-latest
@@ -80,15 +89,15 @@ jobs:
       fail-fast: true
       
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
           
     - name: Run Microsoft Security DevOps
-      uses: microsoft/security-devops-action@preview
+      uses: microsoft/security-devops-action@v1
       continue-on-error: false
       id: msdo
 
     - name: Upload alerts to Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}
 ~~~~~~~

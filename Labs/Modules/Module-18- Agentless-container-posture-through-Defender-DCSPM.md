@@ -56,6 +56,13 @@ docker tag alpine <MYACR>.azurecr.io/mdc-mock-0001
 docker push <MYACR>.azurecr.io/mdc-mock-0001
 ```
 
+> [!NOTE]
+> Azure Cloud Shell doesn't include a Docker engine, so the `docker` commands above fail there. Import the image directly into your registry instead; no Docker needed:
+> ```
+> az acr import --name <MYACR> --source docker.io/library/alpine:latest --image mdc-mock-0001:latest
+> ```
+> Your image URI for step 4 is then `<MYACR>.azurecr.io/mdc-mock-0001:latest`. If the import fails with a Docker Hub rate-limit error (`toomanyrequests`), wait a few minutes and retry.
+
 
 **3.	Allow work on the cluster:**
 

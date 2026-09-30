@@ -26,6 +26,73 @@
                 "Premium_LRS"
             ]
         },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2als_v7",
+            "metadata": {
+                "description": "Size of the Windows and Linux VMs. v6/v7 sizes need diskControllerType NVMe; B-series and older sizes need SCSI"
+            }
+        },
+        "aksNodeVmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2als_v7",
+            "metadata": {
+                "description": "Size of the AKS node"
+            }
+        },
+        "diskControllerType": {
+            "type": "string",
+            "defaultValue": "NVMe",
+            "allowedValues": [
+                "NVMe",
+                "SCSI"
+            ],
+            "metadata": {
+                "description": "VM disk controller. Use NVMe for v6/v7 sizes, SCSI for B-series and older sizes"
+            }
+        },
+        "windowsSku": {
+            "type": "string",
+            "defaultValue": "2022-datacenter-g2",
+            "metadata": {
+                "description": "Windows Server image SKU. v6/v7 sizes need a Gen2 image"
+            }
+        },
+        "deploySql": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Deploy the SQL server and sample database. Set to true once the subscription is allowed to create SQL servers in sqlLocation"
+            }
+        },
+        "sqlLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Region for the SQL server and database. Change it (for example to eastus2 or centralus) if the resource group's region does not accept new SQL servers"
+            }
+        },
+        "deployAppService": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Deploy the App Service plan, web app and function app. Set to false if the subscription has no App Service quota"
+            }
+        },
+        "appServicePlanSku": {
+            "type": "string",
+            "defaultValue": "B1",
+            "allowedValues": [
+                "B1",
+                "B2",
+                "S1",
+                "P0v3",
+                "P1v3"
+            ],
+            "metadata": {
+                "description": "App Service plan tier"
+            }
+        },
         "resourceTags": {
             "type": "object",
             "defaultValue": {
@@ -39,7 +106,7 @@
         "workspaceSKU": "PerGB2018",
         "vmNameWindows": "asclab-win",
         "vmNameLinux": "asclab-linux",
-        "vmSize": "Standard_B1ms",
+        "vmSize": "[parameters('vmSize')]",
         "availabilitySetName": "asclab-as",
         "vNetName": "asclab-vnet",
         "vNetAddressPrefix": "192.168.0.0/16",
@@ -49,7 +116,7 @@
         "subnetRef": "[concat(variables('vNetId'),'/subnets/', variables('subnetName'))]",
         "nsgName": "asclab-nsg",
         "windowsOffer": "WindowsServer",
-        "windowsSku": "2016-Datacenter",
+        "windowsSku": "[parameters('windowsSku')]",
         "windowsPublisher": "MicrosoftWindowsServer",
         "linuxOffer": "0001-com-ubuntu-server-jammy",
         "linuxSku": "22_04-lts-gen2",
@@ -326,7 +393,7 @@
             }
         },
         {
-            "apiVersion": "2018-10-01",
+            "apiVersion": "2024-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmNameWindows'))]",
             "location": "[resourceGroup().location]",
@@ -348,6 +415,7 @@
                     "adminpassword": "[parameters('password')]"
                 },
                 "storageProfile": {
+                    "diskControllerType": "[parameters('diskControllerType')]",
                     "imageReference": {
                         "publisher": "[variables('windowsPublisher')]",
                         "offer": "[variables('windowsOffer')]",
@@ -373,7 +441,7 @@
             }
         },
         {
-            "apiVersion": "2018-10-01",
+            "apiVersion": "2024-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmNameLinux'))]",
             "location": "[resourceGroup().location]",
@@ -395,6 +463,7 @@
                     "adminpassword": "[parameters('password')]"
                 },
                 "storageProfile": {
+                    "diskControllerType": "[parameters('diskControllerType')]",
                     "imageReference": {
                         "publisher": "[variables('linuxPublisher')]",
                         "offer": "[variables('linuxOffer')]",
@@ -435,12 +504,13 @@
             }
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "name": "[variables('appServicePlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-08-01",
             "sku": {
-                "name": "S1"
+                "name": "[parameters('appServicePlanSku')]"
             },
             "dependsOn": [],
             "tags": "[parameters('resourceTags')]",
@@ -450,6 +520,7 @@
             }
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "name": "[variables('appServiceName')]",
             "type": "Microsoft.Web/sites",
             "location": "[resourceGroup().location]",
@@ -473,19 +544,7 @@
                     "name": "standard"
                 },
                 "tenantId": "[subscription().tenantid]",
-                "accessPolicies": [
-                    {
-                        "tenantId": "[subscription().tenantid]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')),'2019-08-01', 'full').identity.principalId]",
-                        "permissions": {
-                            "keys": [],
-                            "secrets": [
-                                "get"
-                            ],
-                            "certificates": []
-                        }
-                    }
-                ],
+                "accessPolicies": "[if(parameters('deployAppService'), createArray(createObject('tenantId', subscription().tenantid, 'objectId', reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2019-08-01', 'full').identity.principalId, 'permissions', createObject('keys', createArray(), 'secrets', createArray('get'), 'certificates', createArray()))), createArray())]",
                 "enabledForDeployment": false,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": false
@@ -496,6 +555,7 @@
             "tags": "[parameters('resourceTags')]"
         },
         {
+            "condition": "[parameters('deployAppService')]",
             "type": "Microsoft.Web/sites",
             "kind": "functionapp",
             "name": "[variables('functionName')]",
@@ -552,7 +612,7 @@
                     {
                         "name": "agentpool",
                         "count": 1,
-                        "vmSize": "Standard_B2s",
+                        "vmSize": "[parameters('aksNodeVmSize')]",
                         "osType": "Linux",
                         "storageProfile": "ManagedDisks",
                         "type": "VirtualMachineScaleSets",
@@ -583,9 +643,10 @@
             }
         },
         {
+            "condition": "[parameters('deploySql')]",
             "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('sqlLocation')]",
             "apiVersion": "2015-05-01-preview",
             "dependsOn": [],
             "tags": "[parameters('resourceTags')]",
@@ -595,9 +656,10 @@
             },
             "resources": [
                 {
+                    "condition": "[parameters('deploySql')]",
                     "name": "AllowAzureIPs",
                     "type": "firewallrules",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('sqlLocation')]",
                     "apiVersion": "2015-05-01-preview",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
@@ -608,9 +670,10 @@
                     }
                 },
                 {
+                    "condition": "[parameters('deploySql')]",
                     "name": "[variables('sqlDatabaseName')]",
                     "type": "databases",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('sqlLocation')]",
                     "apiVersion": "2017-03-01-preview",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"

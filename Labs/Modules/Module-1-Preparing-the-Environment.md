@@ -98,6 +98,13 @@ When the deployment is complete, you should see the following:
 
 ### Exercise 3: Enabling Microsoft Defender for Cloud
 
+> [!WARNING]
+> **Outdated steps:** The **Getting started > Upgrade** flow and the workspace upgrade below come from the Log Analytics agent (MMA) era. The MMA retired in November 2024 and Defender plans no longer need to be enabled on a Log Analytics workspace. If you don't see the **Upgrade** tab, use this instead:
+> 1. In **Microsoft Defender for Cloud**, open **Environment settings** and select your subscription.
+> 2. Select **Enable all plans** (or turn on the plans you need one by one), then **Save**. Each plan starts its 30-day free trial the first time it's turned on.
+>
+> More details: [Prepare for retirement of the Log Analytics agent](https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepare-deprecation-log-analytics-mma-agent).
+
 #### Subscription upgrade and agents installation
 1. Open **Azure Portal** and navigate to **Microsoft Defender for Cloud** blade.
 2. Click on **Getting started** page from the left pane, On the **Upgrade** Tab, select subscription (Azure subscription 1) and press **Enable**.

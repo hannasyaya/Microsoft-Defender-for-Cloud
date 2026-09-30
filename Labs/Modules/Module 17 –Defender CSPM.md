@@ -229,6 +229,12 @@ As a security administrator, you are tasked with reducing the risk of excessive 
 
 This exercise aims to provide you with practical experience in managing cloud permissions, focusing on minimizing the risk associated with over-privileged identities and ensuring compliance with your organization’s security policies.
 
+> [!WARNING]
+> **Partly outdated:** Microsoft Entra Permissions Management reached end of sale and is being retired. Its deprecation doesn't affect CIEM in Defender for Cloud, which is now a native capability of the **Defender CSPM** plan ([learn more](https://learn.microsoft.com/en-us/azure/defender-for-cloud/permissions-management)). As a result:
+> - Steps 4-5 may not apply: if there's no **Permissions Management** toggle in the plan settings, CIEM is already included when Defender CSPM is on. Skip to step 7.
+> - The **Permissions Creep Index (PCI)** metric has been deprecated, and inactive-identity recommendations now use a 90-day lookback based on unused role assignments.
+> - The CIEM findings are also available in Cloud Security Explorer, attack paths and the CIEM workbook.
+
 ### Steps
 
 1. **Sign in to the Azure Portal** and navigate to **Microsoft Defender for Cloud**.

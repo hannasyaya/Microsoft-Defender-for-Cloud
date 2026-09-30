@@ -130,6 +130,9 @@ Exploring secure score
 10. Wait for a notification: ✅ **Fix successful** - Successfully remediated the issues on the selected 
 resources. Note: It can take several minutes after remediation completes to see the resources in the 'healthy resources' tab.
 
+> [!WARNING]
+> **Outdated step:** The recommendations list is no longer grouped by security controls, so there is no "Manage access and permissions" control to expand. Recommendations are now listed individually and prioritized by risk level. Preview recommendations can still be found with the search box or filters. Microsoft is also moving to a new recommendation model and a risk-based **Cloud Secure Score** in the [Defender portal](https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls?pivots=defender-portal).
+
 11.	Return to recommendations list. Expend the "Manage access and permissions" security control, you can now see **Preview recommendations** which have the flag symbol to the right, under **Insights**. Those with **Preview recommendations** aren’t included in the calculation of your score. They should be still remediated, so that when the preview period ends, they will contribute towards your score.
 ![Remediate a resource](../Images/module2_recommendations_previewrecommendations_yl.png?raw=true)
 
@@ -148,6 +151,9 @@ Asset inventory dashboard allows you to get a single pane of glass view to all y
 
 4.	Notice the number of **unhealthy resources: 11** (resources with active recommendations based on the selected filter)
 5.	Notice the **unmonitored resources: 0** (indicates if there are resources with Log Analytics agent deployed but with health issues). Since we enabled the auto-provisioning in the previous module, all existing VMs are covered and connected = monitored.
+
+> [!WARNING]
+> **Deprecated:** The "unmonitored resources" count relates to the Log Analytics agent, which retired in November 2024. Defender for Servers now uses the Microsoft Defender for Endpoint agent and agentless machine scanning, so this counter may be missing or always 0.
 6.	Use the **Filter by name** box to search for **linux**. You should now see a filtered view of the disks in your environments.  Clear the filter.
 7.	Open the resource health pane by selecting the resource. Click on **asclab-linux**. 
 8.	On the resource health pane for **asclab-linux**, review the virtual machine information alongside with a recommendation list.
@@ -155,6 +161,9 @@ Asset inventory dashboard allows you to get a single pane of glass view to all y
 9.	Navigate back to the **Inventory page**. From the filter menu, select the **Resource Group** filter and then **asclab-aks**. Using this filter, you can see all resources related to the predefined Kubernetes resources which are monitored with no active recommendations. Clear the filter by selecting **Resource Group** and then **Select all**.
 
 > Notice! The entire grid can be filtered and sorted
+
+> [!NOTE]
+> Steps 10 and 11 use the SQL server and App Services from Module 1. If you deployed with `deploySql` or `deployAppService` set to `false`, those resources don't exist; pick any other recommendation and resource type instead.
 
 10.	From the filter menu, select **Recommendations**, uncheck **select all** option and then select the **Auditing on SQL Server should be enabled**. You can also use the search area within the filter to better find across the list. Clear your filter.
 11.	Tag is very common asset management in Azure to do asset management. Using this view, you can assign tags to the filtered resources:
